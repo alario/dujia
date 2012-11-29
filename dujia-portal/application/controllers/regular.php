@@ -26,8 +26,7 @@ class Regular extends MY_Controller {
 	{
 		$sql = "select * from dj_regular where rid = {$rid}";
 		$query = $this->db->query( $sql );
-		$data['item'] = $query->result();
-
+		$data["row"] = $query->row();
 		$this->load_default_template_view( 'regular/show_content', $data );
 	}
 }
