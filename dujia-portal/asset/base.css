@@ -6026,9 +6026,7 @@ to {
 #deal-stuff .main {
 	float: left;
 	margin: 15px 0;
-	border-right: 1px solid #e7e7e7;
 	padding: 6px 15px 6px 16px;
-	width: 440px;
 	word-wrap: break-word
 }
 
