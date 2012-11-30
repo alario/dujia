@@ -31,7 +31,7 @@
 			<div class="field-group field-group-type" id="d_signup_password">
 				<label for="signup_password">创建密码</label> <input type="password"
 					name="signup_password" id="signup_password" class="f-text"
-					autocomplete="off"><span class="inline-tip" style="display: none"></span>
+					autocomplete="off"> <span class="inline-tip" style="display: none"></span>
 			</div>
 			<div class="field-group field-group-type"
 				id="d_signup_password_confirm">
@@ -53,8 +53,9 @@
 <!--
 
 $( function() {
+	
 	var the_form = $('#mobile-signup-form');
-	var inputs = the_form.find("div").find("input");
+	var inputs = the_form.find("div").find("input").filter(".f-text");
 	inputs.filter('#signup_mobile').data( 'prompt', '用于登录和找回密码，不会公开' );
 	inputs.filter('#signup_mobile').data( 'error', '请输入正确的11位手机号码' );
 	inputs.filter('#signup_mobile').data( 'remoting', '检查中...' );
@@ -62,16 +63,69 @@ $( function() {
 		var obj = inputs.filter('#signup_mobile');
 		if ( /^1[3|4|5|8][0-9]\d{8}$/.test( obj.val() ) )
 		{
+			var remoting = {
+					url: "/account/mobile_signup_checkmobile/" + obj.val(),
+					error: function( x, error ) {},
+					success: function( data ) {
+						
+					} 
+			};
+			$.ajax( remoting );
 			return 'remoting';
 		}
 		else
 			return 'error';
 	} );
-	
 
-	
-	inputs.focus( function() {
-		var obj = this;
+	inputs.filter("#signup_verify_code").data( 'prompt', '请输入收到的手机验证码' );
+	inputs.filter('#signup_verify_code').data( 'error', '请输入收到的手机验证码' );
+	inputs.filter('#signup_verify_code').data( 'remoting', '检查中...' );
+	inputs.filter('#signup_verify_code').data( 'validation', function() {
+		var obj = inputs.filter('#signup_verify_code');
+		if ( obj.val() != '' )
+		{
+			return 'success';
+		}
+		else
+			return 'error';
+	} );
+
+	inputs.filter("#signup_password_confirm").data( 'prompt', '请再次输入密码' );
+	inputs.filter('#signup_password_confirm').data( 'error', '请再次输入密码' );
+	inputs.filter('#signup_password_confirm').data( 'remoting', '检查中...' );
+	inputs.filter('#signup_password_confirm').data( 'validation', function() {
+		var obj = inputs.filter('#signup_password_confirm');
+		if ( obj.val().length == 0 )
+			return 'error';
+		else if ( obj.val() == inputs.filter( '#signup_password' ).val() )
+		{
+			return 'success';
+		}
+		else return '两次输入的密码不一致，请重新输入';
+	} );
+
+
+	inputs.filter("#signup_password").data( 'prompt', '6-32字符，可使用字母、数字及符号的任意组合' );
+	inputs.filter('#signup_password').data( 'error', '请填写密码' );
+	inputs.filter('#signup_password').data( 'remoting', '检查中...' );
+	inputs.filter('#signup_password').data( 'validation', function() {
+		var obj = inputs.filter('#signup_password');
+		if ( /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/.test( obj.val() ) )
+		{
+			return 'success';
+		}
+		else if ( obj.val().length == 0 )
+			return 'error';
+		else if ( obj.val().length < 6 )
+			return '密码太短，至少6个字符';
+		else if ( obj.val().length > 32 )
+			return '密码太长，最多32个字符';
+		else return 'error';
+	} );
+
+	inputs.filter('#signup_password').data( 'trigger-validation', inputs.filter('#signup_password_confirm')[0] );
+
+	var input_prompt = function( obj ) {
 		$(obj).parent("div").attr('class', 'field-group field-group-type');
 		var prompt = $(obj).data('prompt');
 		if ( typeof( prompt ) == 'undefined' || prompt == '' )
@@ -83,11 +137,34 @@ $( function() {
 			$(obj).parent("div").find('.inline-tip').css('display', '');
 			$(obj).parent("div").find('.inline-tip').text( prompt );
 		}
-	} );
-	inputs.blur( function() {
-		var obj = this;
+		$(obj).data('validated', false);
+	};
+
+	var show_success = function( div ) {
+		div.attr('class', 'field-group field-group-ok');
+		div.find('.inline-tip').css('display', '');
+		div.find('.inline-tip').text('');
+	};
+
+	var show_error = function( div, msg ) {
+		div.attr('class', 'field-group field-group-error');
+		div.find('.inline-tip').css('display', '');
+		div.find('.inline-tip').text( msg );
+	};
+
+	var input_validate = function( obj, method ) {
+
+		if ( method == 'ontrigger' && 'none' == $(obj).parent("div").find('.inline-tip').css('display') )
+			return true;
+		if ( method == 'onsubmit' )
+		{
+			var validated = $(obj).data('validated');
+			if ( typeof( validated ) != 'undefined' && validated )
+				return true;
+		}
 		var validation = $(obj).data("validation");
 		var result = validation();
+		var ret = false;
 		if ( result == 'error' )
 		{
 			$(obj).parent("div").attr('class', 'field-group field-group-error');
@@ -105,23 +182,31 @@ $( function() {
 			$(obj).parent("div").attr('class', 'field-group field-group-ok');
 			$(obj).parent("div").find('.inline-tip').css('display', '');
 			$(obj).parent("div").find('.inline-tip').text('');
+			ret = true;
 		}
-	} );
-
-	/*
-	var d_signup_mobile = the_form.find("#d_signup_mobile");
-	d_signup_mobile.find("input").focus( function( obj ) {
-		d_signup_mobile.attr('class', 'field-group field-group-type');
-		d_signup_mobile.find("span").text('用于登录和找回密码，不会公开');
-	} );
-	d_signup_mobile.find("input").blur( function( obj ){
-		
-	} );
+		else
+		{
+			$(obj).parent("div").attr('class', 'field-group field-group-error');
+			$(obj).parent("div").find('.inline-tip').css('display', '');
+			$(obj).parent("div").find('.inline-tip').text( result );
+		}
+		if ( method == 'input' && typeof $(obj).data("trigger-validation") != 'undefined' )
+		{
+			input_validate( $(obj).data("trigger-validation"), 'ontrigger' );
+		}
+		$(obj).data('validated', ret);
+		return ret;
+	};
 	
-	var d_signup_verify_code = the_form.find("#d_signup_verify_code");
-	var d_signup_password = the_form.find("#d_signup_password");
-	var signup_password_confirm = the_form.find("#signup_password_confirm");
-	*/	
+	inputs.focus( function() { input_prompt( this ); } );
+	inputs.blur( function() { input_validate( this, 'onblur' ); } );
+	the_form.submit( function( e ) {
+		var passed = true;
+		inputs.each( function(){ passed &= input_validate( this, 'onsubmit' ); } );
+		if ( !passed )
+			e.preventDefault();
+	} );
+			
 } );
 //-->
 </script>

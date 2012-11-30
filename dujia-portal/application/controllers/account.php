@@ -22,6 +22,13 @@ class Account extends MY_Controller {
 		$this->load_templated_view( 'signup', '/account/mobile_signup_content' );
 	}
 	
+	public function mobile_signup_checkmobile( $num )
+	{
+		$sql = 'select uid from dj_account where mobile = ?';
+		$query = $this->db->query( $sql, $num );
+		echo $query->num_rows();
+	}
+	
 	public function mobile_signup_submit()
 	{
 		$this->load->helper('form');
