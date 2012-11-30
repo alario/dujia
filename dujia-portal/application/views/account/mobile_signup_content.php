@@ -62,7 +62,7 @@ $( function() {
 		var obj = inputs.filter('#signup_mobile');
 		if ( /^1[3|4|5|8][0-9]\d{8}$/.test( obj.val() ) )
 		{
-			return 'success';
+			return 'remoting';
 		}
 		else
 			return 'error';
