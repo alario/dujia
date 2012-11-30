@@ -65,9 +65,14 @@ $( function() {
 		{
 			var remoting = {
 					url: "/account/mobile_signup_checkmobile/" + obj.val(),
-					error: function( x, error ) {},
+					error: function( x, error ) {
+						show_error( obj, '网站维护中，暂时不能注册' );
+					},
 					success: function( data ) {
-						
+						if ( data == '0' )
+							show_success( obj );
+						else
+							show_error( obj, '该手机号已被绑定，<a href="/account/login">直接登录</a>' );
 					} 
 			};
 			$.ajax( remoting );
@@ -140,18 +145,31 @@ $( function() {
 		$(obj).data('validated', false);
 	};
 
-	var show_success = function( div ) {
+	var show_success = function( jobj ) {
+		jobj.data("validated", true);
+		var div = jobj.parent('div');
 		div.attr('class', 'field-group field-group-ok');
 		div.find('.inline-tip').css('display', '');
-		div.find('.inline-tip').text('');
+		div.find('.inline-tip').html('');
 	};
 
-	var show_error = function( div, msg ) {
+	var show_error = function( jobj, msg ) {
+		jobj.data("validated", false);
+		var div = jobj.parent('div');
 		div.attr('class', 'field-group field-group-error');
 		div.find('.inline-tip').css('display', '');
-		div.find('.inline-tip').text( msg );
+		div.find('.inline-tip').html( msg );
 	};
 
+	var show_remoting = function( jobj, msg ) {
+		jobj.data("validated", false);
+		var div = jobj.parent('div');
+		div.attr('class', 'field-group field-group-type');
+		div.find('.inline-tip').css('display', '');
+		div.find('.inline-tip').html( msg );
+	
+	}
+		
 	var input_validate = function( obj, method ) {
 
 		if ( method == 'ontrigger' && 'none' == $(obj).parent("div").find('.inline-tip').css('display') )
@@ -167,34 +185,25 @@ $( function() {
 		var ret = false;
 		if ( result == 'error' )
 		{
-			$(obj).parent("div").attr('class', 'field-group field-group-error');
-			$(obj).parent("div").find('.inline-tip').css('display', '');
-			$(obj).parent("div").find('.inline-tip').text( $(obj).data('error') );
+			show_error( $(obj), $(obj).data('error') );
 		}
 		else if ( result == 'remoting' )
 		{
-			$(obj).parent("div").attr('class', 'field-group field-group-type');
-			$(obj).parent("div").find('.inline-tip').css('display', '');
-			$(obj).parent("div").find('.inline-tip').text('检查中...');
+			show_remoting( $(obj), '检查中...' );
 		}
 		else if ( result == "success" )
 		{
-			$(obj).parent("div").attr('class', 'field-group field-group-ok');
-			$(obj).parent("div").find('.inline-tip').css('display', '');
-			$(obj).parent("div").find('.inline-tip').text('');
+			show_success( $(obj) );
 			ret = true;
 		}
 		else
 		{
-			$(obj).parent("div").attr('class', 'field-group field-group-error');
-			$(obj).parent("div").find('.inline-tip').css('display', '');
-			$(obj).parent("div").find('.inline-tip').text( result );
+			show_error( $(obj), result );
 		}
 		if ( method == 'input' && typeof $(obj).data("trigger-validation") != 'undefined' )
 		{
 			input_validate( $(obj).data("trigger-validation"), 'ontrigger' );
 		}
-		$(obj).data('validated', ret);
 		return ret;
 	};
 	
