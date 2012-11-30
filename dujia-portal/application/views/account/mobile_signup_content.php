@@ -16,7 +16,7 @@
 			<div class="field-group field-group-type" id="d_signup_mobile">
 				<label for="signup_mobile">手机号</label> <input type="text"
 					name="signup_mobile" id="signup_mobile" class=" f-text"
-					autocomplete="off" value=""> <span class="inline-tip" style="display: none">用于登录和找回密码，不会公开</span>
+					autocomplete="off" value=""> <span class="inline-tip" style="display: ">用于登录和找回密码，不会公开</span>
 				<p class="verify-mobile">
 					<input type="button" class="verify-btn" value="免费获取短信验证码"> <span
 						class="verify-tip" id="yui_3_5_1_2_1354253427102_11"></span>
@@ -49,8 +49,10 @@
 		</form>
 	</div>
 </div>
+<script type="text/javascript" src="/asset/helper/account_signup_validation.js"></script>
 <script type="text/javascript">
 <!--
+
 
 $( function() {
 	
@@ -130,91 +132,7 @@ $( function() {
 
 	inputs.filter('#signup_password').data( 'trigger-validation', inputs.filter('#signup_password_confirm')[0] );
 
-	var input_prompt = function( obj ) {
-		$(obj).parent("div").attr('class', 'field-group field-group-type');
-		var prompt = $(obj).data('prompt');
-		if ( typeof( prompt ) == 'undefined' || prompt == '' )
-		{
-			$(obj).parent("div").find('.inline-tip').css('display', 'none');
-		}
-		else
-		{
-			$(obj).parent("div").find('.inline-tip').css('display', '');
-			$(obj).parent("div").find('.inline-tip').text( prompt );
-		}
-		$(obj).data('validated', false);
-	};
-
-	var show_success = function( jobj ) {
-		jobj.data("validated", true);
-		var div = jobj.parent('div');
-		div.attr('class', 'field-group field-group-ok');
-		div.find('.inline-tip').css('display', '');
-		div.find('.inline-tip').html('');
-	};
-
-	var show_error = function( jobj, msg ) {
-		jobj.data("validated", false);
-		var div = jobj.parent('div');
-		div.attr('class', 'field-group field-group-error');
-		div.find('.inline-tip').css('display', '');
-		div.find('.inline-tip').html( msg );
-	};
-
-	var show_remoting = function( jobj, msg ) {
-		jobj.data("validated", false);
-		var div = jobj.parent('div');
-		div.attr('class', 'field-group field-group-type');
-		div.find('.inline-tip').css('display', '');
-		div.find('.inline-tip').html( msg );
-	
-	}
-		
-	var input_validate = function( obj, method ) {
-
-		if ( method == 'ontrigger' && 'none' == $(obj).parent("div").find('.inline-tip').css('display') )
-			return true;
-		if ( method == 'onsubmit' )
-		{
-			var validated = $(obj).data('validated');
-			if ( typeof( validated ) != 'undefined' && validated )
-				return true;
-		}
-		var validation = $(obj).data("validation");
-		var result = validation();
-		var ret = false;
-		if ( result == 'error' )
-		{
-			show_error( $(obj), $(obj).data('error') );
-		}
-		else if ( result == 'remoting' )
-		{
-			show_remoting( $(obj), '检查中...' );
-		}
-		else if ( result == "success" )
-		{
-			show_success( $(obj) );
-			ret = true;
-		}
-		else
-		{
-			show_error( $(obj), result );
-		}
-		if ( method == 'input' && typeof $(obj).data("trigger-validation") != 'undefined' )
-		{
-			input_validate( $(obj).data("trigger-validation"), 'ontrigger' );
-		}
-		return ret;
-	};
-	
-	inputs.focus( function() { input_prompt( this ); } );
-	inputs.blur( function() { input_validate( this, 'onblur' ); } );
-	the_form.submit( function( e ) {
-		var passed = true;
-		inputs.each( function(){ passed &= input_validate( this, 'onsubmit' ); } );
-		if ( !passed )
-			e.preventDefault();
-	} );
+	register_validation( the_form, inputs );
 			
 } );
 //-->

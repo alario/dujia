@@ -11,16 +11,19 @@ if ( $my_djview_bodyid == 'signup' || $my_djview_bodyid == 'login' )
 ?>
 <script type="text/javascript" src="/asset/jquery-1.8.3.js"></script>
 <?php 
-if ( is_array( $addtional_js ) )
+if ( isset( $jslink ) )
 {
-	foreach ( $addtional_js as $tmp_js )
+	if ( is_array( $jslink ) )
 	{
-		echo "<script type='text/javascript' src='{$tmp_js}'></script>";
+		foreach ( $jslink as $tmp_js )
+		{
+			echo "<script type='text/javascript' src='{$tmp_js}'></script>";
+		}
 	}
-}
-else if ( isset( $addtional_js ) )
-{
-	echo "<script type='text/javascript' src='{$addtional_js}'></script>";
+	else
+	{
+		echo "<script type='text/javascript' src='{$jslink}'></script>";
+	}
 }
 ?>
 </head>

@@ -7,8 +7,7 @@
 				<li><a class="mobile-trigger" href="/account/mobile_signup"><i></i><span></span>手机注册</a>
 				</li>
 			</ul>
-			<span class="login-guide">已有美团账号？<a href="/account/login"
-				gaevent="InnerLink|Click|content/login">登录 »</a>
+			<span class="login-guide">已有账号？<a href="/account/login">登录 »</a>
 			</span>
 		</div>
 
@@ -49,3 +48,8 @@
 		</form>
 	</div>
 </div>
+<script type="text/javascript" src="/asset/helper/account_signup_validation.js"></script>
+<script type="text/javascript">
+<!--
+-->
+</script>
