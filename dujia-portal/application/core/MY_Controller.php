@@ -15,6 +15,16 @@ class MY_Controller extends CI_Controller
 		$this->template_params[ $name ] = $value;
 	}
 	
+	function write_account_ticket( $user_name, $email, $mobile, $remember )
+	{
+		$cookie = array(
+				'name'   => 'ticket',
+				'value'  => $mobile,
+				'expire' => '0'
+		);
+		$this->input->set_cookie( $cookie );
+	}
+	
 	function load_templated_view( $bodyid, $content, $data = '' )
 	{
 		$dj_data['my_djview_bodyid'] = $bodyid;

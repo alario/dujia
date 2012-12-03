@@ -18,8 +18,8 @@
 					name="signup_mobile" id="signup_mobile" class=" f-text"
 					autocomplete="off" value=""> <span class="inline-tip" style="display: ">用于登录和找回密码，不会公开</span>
 				<p class="verify-mobile">
-					<input type="button" class="verify-btn" value="免费获取短信验证码"> <span
-						class="verify-tip" id="yui_3_5_1_2_1354253427102_11"></span>
+					<input type="button" class="verify-btn" id="signup_sms_button" value="免费获取短信验证码"> <span
+						class="verify-tip" id="signup_sms_tip"></span>
 				</p>
 			</div>
 			<div class="field-group field-group-type" id="d_signup_verify_code">
@@ -133,7 +133,67 @@ $( function() {
 	inputs.filter('#signup_password').data( 'trigger-validation', inputs.filter('#signup_password_confirm')[0] );
 
 	register_validation( the_form, inputs );
-			
+
+	
+	the_form.find('#signup_sms_button').click( function() {
+		var obj = inputs.filter('#signup_mobile');
+		var tip_span = the_form.find('#signup_sms_tip');
+		var num = obj.val();
+		if ( /^1[3|4|5|8][0-9]\d{8}$/.test( obj.val() ) )
+		{
+			var button = the_form.find('#signup_sms_button');
+			var tip_span = the_form.find('#signup_sms_tip');
+			button.attr( 'disabled', 'true' );
+			tip_span.css( 'display', '' );
+			tip_span.text( '发送中...' );
+			var remoting = {
+					url: "/account/mobile_signup_sms/" + obj.val(),
+					error: function( x, error ) {
+						tip_span.css( 'display', '' );
+						tip_span.text( '网站没有响应，请稍后重试' );
+					},
+					success: function( data ) {
+						if ( data == 'ok' )
+						{
+							tip_span.css( 'display', '' );
+							tip_span.text( '已发送，1分钟后可重新获取' );
+													
+							var remain = 60;
+							button.val( '重新获取(' + remain + ')' );
+							button.attr( 'disabled', 'true' );
+							var timer = setInterval( function()
+							{
+								remain--;
+								if ( remain > 0 )
+								{
+									button.val( '重新获取(' + remain + ')' );
+									button.attr( 'disabled', 'true' );
+								}
+								else
+								{
+									button.val( '重新获取' );
+									button.removeAttr( 'disabled' );
+									tip_span.css( 'display', 'none' );
+									clearInterval( timer );
+								}
+							}, 1000 );
+
+						}
+						else if ( data == 'mobile already exists' )
+						{
+							tip_span.css( 'display', 'none' );
+							show_error( obj, '该手机号已被绑定，<a href="/account/login">直接登录</a>' );
+							button.val( '重新获取' );
+							button.removeAttr( 'disabled' );
+							tip_span.css( 'display', 'none' );
+						}
+					} 
+			};
+			$.ajax( remoting );
+		}
+		else
+			show_error( obj, '请输入正确的11位手机号码' );
+	} );
 } );
 //-->
 </script>

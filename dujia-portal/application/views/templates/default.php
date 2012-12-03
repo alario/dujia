@@ -2,7 +2,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>精选假期</title>
+<title><?php
+if ( isset($subtitle) ) echo $subtitle." | 度假网";
+else echo "度假网"; ?>
+</title>
 <link rel="icon" href="/asset/favicon.ico?v=6" type="image/x-icon" />
 <link rel="stylesheet" href="/asset/base.css" />
 <?php
@@ -95,6 +98,15 @@ if ( isset( $jslink ) )
 			</div>
 		</div>
 
+		<?php if ( isset( $sysmsg) ): ?>
+		<div class="sysmsgw" id="sysmsg-error">
+			<div class="sysmsg">
+				<p id="yui_3_5_1_1_1354352859176_48"><?php echo $sysmsg; ?></p>
+				<span class="close">关闭</span>
+			</div>
+		</div>
+		<?php endif; ?>
+		
 		<div id="bd" class="cf" style="position: static;">
 			<?php echo $my_djview_content; ?>
 			<?php if ( isset( $my_djview_sidebar ) ) echo $my_djview_sidebar; ?>
