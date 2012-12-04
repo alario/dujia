@@ -88,10 +88,17 @@ if ( isset( $jslink ) )
 							<li><a href="/haiwai.php">海外度假</a></li>
 						</ul>
 						<ul class="user-info">
+							<?php if ( isset( $ticket ) ):?>
+							<li class="name">欢迎您，<?php echo $ticket['mb']; ?>
+							</li>
+							<li class="login"><a href="/account/logout">退出</a>
+							</li><?php else: ?>
+							
 							<li class="login"><a href="/account/login">登录</a>
 							</li>
 							<li class="login"><a href="/account/signup">注册</a>
 							</li>
+							<?php endif;?>
 						</ul>
 					</div>
 				</div>
@@ -101,15 +108,18 @@ if ( isset( $jslink ) )
 		<?php if ( isset( $sysmsg) ): ?>
 		<div class="sysmsgw" id="sysmsg-error">
 			<div class="sysmsg">
-				<p id="yui_3_5_1_1_1354352859176_48"><?php echo $sysmsg; ?></p>
+				<p id="yui_3_5_1_1_1354352859176_48">
+					<?php echo $sysmsg; ?>
+				</p>
 				<span class="close">关闭</span>
 			</div>
 		</div>
 		<?php endif; ?>
-		
-		<div id="bd" class="cf" style="position: static;">
-			<?php echo $my_djview_content; ?>
-			<?php if ( isset( $my_djview_sidebar ) ) echo $my_djview_sidebar; ?>
+		<div id="bdw" style="bdw">
+			<div id="bd" class="cf" style="position: static;">
+				<?php echo $my_djview_content; ?>
+				<?php if ( isset( $my_djview_sidebar ) ) echo $my_djview_sidebar; ?>
+			</div>
 		</div>
 		<div id="ftw">
 			<?php if ( isset( $my_trace_var) )  var_dump($my_trace_var); ?>

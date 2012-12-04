@@ -2,6 +2,18 @@
 
 class Account extends MY_Controller {
 
+	public function logout()
+	{
+		$this->load->helper('url');
+		$this->clear_account_ticket();
+		redirect( '/' );
+	}
+	
+	public function login()
+	{
+		$this->set_template_param( 'subtitle', '登录' );
+		$this->load_templated_view( 'login', '/account/login_content' );
+	}
 	
 	public function signup()
 	{
@@ -75,34 +87,19 @@ class Account extends MY_Controller {
 				return;
 			}
 			$row = $query->row();
-			var_dump($row);
 			$code_id = $row->id;
 			
 			$insertion = array(
 					'mobile' => $this->input->post('signup_mobile'),
 					'password' => $this->input->post('signup_password')
 					);
-			$this->db->insert( 'usr_account', $insertion );
-			
+			$inserted = $this->db->insert( 'usr_account', $insertion );
+			$uid = $this->db->insert_id();
 			$sql = 'delete from usr_smscode where id = ?';
 			$this->db->query( $sql, $code_id );
-			$this->write_account_ticket('', '', $this->input->post('signup_mobile'), FALSE);
+			$this->write_account_ticket( $uid, '', '', $this->input->post('signup_mobile'), FALSE);
 			echo 'ok';
 		}
 	}
 	
-	public function set_news()
-	{
-		$this->load->helper('url');
-	
-		$slug = url_title($this->input->post('title'), 'dash', TRUE);
-	
-		$data = array(
-				'title' => $this->input->post('title'),
-				'slug' => $slug,
-				'text' => $this->input->post('text')
-		);
-	
-		return $this->db->insert('news', $data);
-	}
 }
