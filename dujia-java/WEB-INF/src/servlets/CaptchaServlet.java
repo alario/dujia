@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +51,6 @@ public class CaptchaServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-	
 
 		List<Color> colors = new ArrayList<Color>();
 		colors.add(CColor.DARK_GRAY);
@@ -61,7 +61,7 @@ public class CaptchaServlet extends HttpServlet {
 		Builder builder = new Captcha.Builder(60, 30)
 				.addText(
 						new DefaultTextProducer(4,
-								"1234567890ABCDEFGHJKLMNPQRSTUVWXY"
+								"1234567890ABCDEFGHJKLMNPQRSTUVWXYabcdefghijkmnpqrstuvwxy"
 										.toCharArray()),
 						new DefaultWordRenderer(colors, fonts)).gimp()
 				.addBorder();
@@ -70,11 +70,7 @@ public class CaptchaServlet extends HttpServlet {
 		String answer = captcha.getAnswer();
 		UUID uuid = UUID.randomUUID();
 		String key = uuid.toString();
-		
-		String resource = "data/mybatis-config.xml";
-		InputStream inputStream = Resources.getResourceAsStream(resource);
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder()
-				.build(inputStream);
+
 		SqlSession session = Database.getInstance().openSession();
 		USRCaptcha.Mapper mapper = session.getMapper(USRCaptcha.Mapper.class);
 		USRCaptcha item = new USRCaptcha();
@@ -83,9 +79,11 @@ public class CaptchaServlet extends HttpServlet {
 		mapper.insert(item);
 		session.commit();
 		session.close();
+		Cookie cookie = new Cookie("captcha-key", key);
+		cookie.setPath("/");
+		cookie.setMaxAge(5 * 60);
+		resp.addCookie(cookie);
 		BufferedImage image = captcha.getImage();
 		CaptchaServletUtil.writeImage(resp, image);
-
 	}
-
 }
