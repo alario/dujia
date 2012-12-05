@@ -9,7 +9,7 @@ else echo "度假网"; ?>
 <link rel="icon" href="/asset/favicon.ico?v=6" type="image/x-icon" />
 <link rel="stylesheet" href="/asset/base.css" />
 <?php
-if ( $my_djview_bodyid == 'signup' || $my_djview_bodyid == 'login' )
+if ( $bodyId == 'signup' || $bodyId == 'login' )
 	echo "<link rel='stylesheet' href='/asset/account.css'>";
 ?>
 <script type="text/javascript" src="/asset/jquery-1.8.3.js"></script>
@@ -30,7 +30,7 @@ if ( isset( $jslink ) )
 }
 ?>
 </head>
-<body id="<?php echo $my_djview_bodyid; ?>">
+<body id="<?php echo $bodyId; ?>">
 	<div id="doc">
 		<div id="hdw">
 			<div id="hd">
@@ -114,15 +114,24 @@ if ( isset( $jslink ) )
 				<span class="close">关闭</span>
 			</div>
 		</div>
+		<script type="text/javascript">
+			$( function() {
+				var divError = $("#sysmsg-error");
+				divError.find("span.close").click( function() {
+					divError.slideUp('fast');
+				} );
+			} );
+					
+		</script>
 		<?php endif; ?>
 		<div id="bdw" style="bdw">
 			<div id="bd" class="cf" style="position: static;">
-				<?php echo $my_djview_content; ?>
-				<?php if ( isset( $my_djview_sidebar ) ) echo $my_djview_sidebar; ?>
+				<?php echo $content; ?>
+				<?php if ( isset( $sidebar ) ) echo $sidebar; ?>
 			</div>
 		</div>
 		<div id="ftw">
-			<?php if ( isset( $my_trace_var) )  var_dump($my_trace_var); ?>
+			<?php if ( isset( $trace) )  var_dump( $trace ); ?>
 			<div id="ft">
 				<div class="ftbox">
 					<h3>用户帮助</h3>
