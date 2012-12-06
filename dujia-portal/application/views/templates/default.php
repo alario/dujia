@@ -11,21 +11,35 @@ else echo "度假网"; ?>
 <?php
 if ( $bodyId == 'signup' || $bodyId == 'login' )
 	echo "<link rel='stylesheet' href='/asset/account.css'>";
-?>
-<script type="text/javascript" src="/asset/jquery-1.8.3.js"></script>
-<?php 
-if ( isset( $jslink ) )
+if ( isset( $css ) )
 {
-	if ( is_array( $jslink ) )
+	if ( is_array( $css ) )
 	{
-		foreach ( $jslink as $tmp_js )
+		foreach ( $css as $tmp )
 		{
-			echo "<script type='text/javascript' src='{$tmp_js}'></script>";
+			echo "<link rel='stylesheet' href='{$tmp}'></script>";
 		}
 	}
 	else
 	{
-		echo "<script type='text/javascript' src='{$jslink}'></script>";
+		echo "<link rel='stylesheet' href='{$css}'></script>";
+	}
+}
+?>
+<script type="text/javascript" src="/asset/jquery-1.8.3.js"></script>
+<?php 
+if ( isset( $js ) )
+{
+	if ( is_array( $js ) )
+	{
+		foreach ( $js as $tmp )
+		{
+			echo "<script type='text/javascript' src='{$tmp}'></script>";
+		}
+	}
+	else
+	{
+		echo "<script type='text/javascript' src='{$js}'></script>";
 	}
 }
 ?>
@@ -126,7 +140,7 @@ if ( isset( $jslink ) )
 		</script>
 		<?php endif; ?>
 		<div id="bdw" style="">
-			<div id="bd" class="cf" style="position: static;">
+			<div id="bd" class="cf">
 				<?php echo $content; ?>
 				<?php if ( isset( $sidebar ) ) echo $sidebar; ?>
 			</div>

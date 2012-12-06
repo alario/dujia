@@ -136,27 +136,60 @@ class Account extends MY_Controller {
 			echo "validation error";
 			return;
 		}
-		$captchaKey = $this->input->cookie('captcha-key');
+		$captchaKey = $this->input->cookie('captcha-key', '');
+		$data['email'] = $this->input->post('email');
+		$data['name'] = $this->input->post('user_name');
+		if ( !isset( $captchaKey ) || $captchaKey == '' )
+		{
+			$this->set_template_param( 'subtitle', '注册' );
+			$this->set_template_param( 'sysmsg', '验证码已失效，请重新注册' );
+			$this->load_templated_view( 'signup', '/account/signup_content', $data );
+			return;
+		}
 			
 		$sql = 'select * from usr_captcha where uuid_key = ?';
 		$query = $this->db->query( $sql, $captchaKey );
 		if ( $query->num_rows() == 0 )
 		{
-			$data['account'] = $account;
 			$this->set_template_param( 'subtitle', '注册' );
 			$this->set_template_param( 'sysmsg', '验证码已失效，请重新注册' );
-			$this->load_templated_view( 'login', '/account/signup_content', $data );
+			$this->load_templated_view( 'signup', '/account/signup_content', $data );
 			return;
 		}
 		
 		$row = $query->row();
 		if ( strcasecmp( $row->answer, $this->input->post('captcha') ) == 0 )
 		{
+			$insertion = array(
+					'email' => $this->input->post('email'),
+					'user_name' => $this->input->post('user_name'),
+					'password' => $this->input->post('password'),
+					'email_verification' => 2
+			);
+			$inserted = $this->db->insert( 'usr_account', $insertion );
+			$uid = $this->db->insert_id();
+			/*
+			$user_name = $this->input->post('user_name');
+			$email = $this->input->post('email');
+			$this->write_account_ticket($uid, $user_name, $email, '', FALSE);
+			*/
+
+			$data['email'] = $this->input->post('email');
+			$this->load->helper('string');
+			$code = random_string( 'sha1', 64 );
+			$insertion = array(
+					'uid' => $uid,
+					'email' => $data['email'],
+					'code' => $code
+					);
+			$inserted = $this->db->insert( 'usr_mailcode', $insertion );
 			
+			$this->set_template_param( 'subtitle', '验证邮箱' );
+			$this->set_template_param( 'css', '/asset/account.css' );
+			$this->load_templated_view( 'signuped', '/account/signup_next_content', $data );
 		}
 		else
 		{
-			$data['account'] = $account;
 			$this->set_template_param( 'subtitle', '注册' );
 			$this->set_template_param( 'sysmsg', '验证码错误' );
 			$this->load_templated_view( 'login', '/account/signup_content', $data );
