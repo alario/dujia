@@ -17,14 +17,13 @@
 				id="yui_3_5_1_2_1354250635802_44">
 				<label for="signup-email-address">邮箱</label> <input type="text"
 					name="email" id="signup-email-address" class="f-text"
-					autocomplete="off" value=''>
-				<span class="inline-tip">用于登录和找回密码，不会公开</span>
+					autocomplete="off" value=''> <span class="inline-tip">用于登录和找回密码，不会公开</span>
 			</div>
 			<div class="field-group" id="yui_3_5_1_2_1354250635802_46">
 				<label for="signup-username">用户名</label> <input type="text"
 					name="username" id="signup-username" class="f-text"
-					autocomplete="off" value="">
-				<span class="inline-tip" style="display: none"></span>
+					autocomplete="off" value=""> <span class="inline-tip"
+					style="display: none"></span>
 			</div>
 			<div class="field-group" id="yui_3_5_1_2_1354250635802_48">
 				<label for="signup-password">创建密码</label> <input type="password"
@@ -48,7 +47,7 @@
 					id="signup_captcha_img" height="30px" width="60px"
 					class="signup-captcha-img" src="/java/captcha"> <a tabindex="-1"
 					class="captcha-refresh inline-link" href="javascript:void(0)"
-					id="signup_captcha_img_change">看不清楚？换一张</a><span id="captcha_tip"
+					id="signup_captcha_img_change">看不清楚？换一张</a> <span id="captcha_tip"
 					class="inline-tip" style="display: none;">请输入验证码</span>
 			</div>
 			<div class="field-group operate">
@@ -184,6 +183,19 @@ $( function() {
 			return 'success';
 		else
 			 return 'error';
+	} );
+
+	inputs.filter("#captcha").data( 'prompt', '请输入图片中的字符，不区分大小写' );
+	inputs.filter("#captcha").data( 'error', '请填写验证码' );
+	inputs.filter('#captcha').data( 'remoting', '检查中...' );
+	inputs.filter('#captcha').data( 'validation', function() {
+		var obj = inputs.filter('#captcha');
+		if ( obj.val().length == 0 )
+			return 'error';
+		else if ( obj.val().length != 4 )
+			return '验证码输入错误，请重新输入';
+		else
+			return 'success';
 	} );
 
 	inputs.filter('#signup-password').data( 'trigger-validation', inputs.filter('#signup-password-confirm')[0] );

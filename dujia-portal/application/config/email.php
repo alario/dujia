@@ -4,6 +4,7 @@ $config['protocol'] = 'smtp';
 $config['smtp_host'] = 'smtp.126.com';
 $config['smtp_user'] = 'alario';
 $config['smtp_pass'] = '9830tcli';
+$config['mailtype'] = 'html';
 
 
 /*

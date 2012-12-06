@@ -138,7 +138,7 @@ class Account extends MY_Controller {
 		}
 		$captchaKey = $this->input->cookie('captcha-key', '');
 		$data['email'] = $this->input->post('email');
-		$data['name'] = $this->input->post('user_name');
+		$data['name'] = $this->input->post('username');
 		if ( !isset( $captchaKey ) || $captchaKey == '' )
 		{
 			$this->set_template_param( 'subtitle', '注册' );
@@ -162,7 +162,7 @@ class Account extends MY_Controller {
 		{
 			$insertion = array(
 					'email' => $this->input->post('email'),
-					'user_name' => $this->input->post('user_name'),
+					'user_name' => $this->input->post('username'),
 					'password' => $this->input->post('password'),
 					'email_verification' => 2
 			);
@@ -183,6 +183,26 @@ class Account extends MY_Controller {
 					'code' => $code
 					);
 			$inserted = $this->db->insert( 'usr_mailcode', $insertion );
+
+			$this->load->helper('url');
+			$verifyUrl = base_url("/account/signup_verify/".$uid."?c=".urlencode($code));
+			
+			$this->load->library('parser');
+			
+			$maildata = array(
+					'url' => $verifyUrl
+			);
+			$mailMessage = $this->parser->parse('/account/mail_verification', $maildata, TRUE);
+			
+			$this->load->library('email');
+			
+			$this->email->from('alario@126.com', '度假网');
+			$this->email->to( $data['email'] );
+			
+			$this->email->subject('感谢注册度假网，请验证Email');
+			$this->email->message($mailMessage);
+			
+			$this->email->send();
 			
 			$this->set_template_param( 'subtitle', '验证邮箱' );
 			$this->set_template_param( 'css', '/asset/account.css' );
@@ -195,6 +215,19 @@ class Account extends MY_Controller {
 			$this->load_templated_view( 'login', '/account/signup_content', $data );
 		}
 		$this->db->delete('usr_captcha', array('uuid_key' => $captchaKey));
+	}
+	
+	public function signup_verify( $uid )
+	{
+		$c = $this->input->get( "c", TRUE );
+		$sql = 'select * from usr_mailcode where uid = ?';
+		$query = $this->db->query( $sql, $uid );
+		if ( $query->num_rows() == 0 )
+		{
+			echo "NO";
+			return;
+		}
+		
 	}
 
 	public function mobile_signup()

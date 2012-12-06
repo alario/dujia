@@ -191,6 +191,23 @@ if (defined('ENVIRONMENT'))
 		define('APPPATH', BASEPATH.$application_folder.'/');
 	}
 
+	
+	/*
+	|---------------------------------------------------------------
+	| DEFAULT TIMEZONE( User Modified )
+	|---------------------------------------------------------------
+	|
+	| Set the default timezone for date/time functions to use if
+	| none is set on the server.
+	|
+	*/
+	
+	if( ! ini_get('date.timezone') )
+	{
+		date_default_timezone_set('GMT');
+	}
+	
+	
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE

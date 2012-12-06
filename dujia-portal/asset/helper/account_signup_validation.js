@@ -1,7 +1,8 @@
 function show_success( jobj ) {
 	jobj.data("validated", true);
 	var div = jobj.parent('div');
-	div.attr('class', 'field-group field-group-ok');
+	div.removeClass('field-group-type field-group-highlight field-group-ok').addClass('field-group-ok');
+	// div.attr('class', 'field-group field-group-ok');
 	div.find('.inline-tip').css('display', '');
 	div.find('.inline-tip').html('');
 };
@@ -9,7 +10,8 @@ function show_success( jobj ) {
 function show_error( jobj, msg ) {
 	jobj.data("validated", false);
 	var div = jobj.parent('div');
-	div.attr('class', 'field-group field-group-error');
+	div.removeClass('field-group-type field-group-highlight field-group-ok').addClass('field-group-error');
+	// div.attr('class', 'field-group field-group-error');
 	div.find('.inline-tip').css('display', '');
 	div.find('.inline-tip').html( msg );
 };
@@ -17,7 +19,8 @@ function show_error( jobj, msg ) {
 function show_remoting( jobj, msg ) {
 	jobj.data("validated", false);
 	var div = jobj.parent('div');
-	div.attr('class', 'field-group field-group-type');
+	div.removeClass('field-group-error field-group-highlight field-group-ok').addClass('field-group-type');
+	// div.attr('class', 'field-group field-group-type');
 	div.find('.inline-tip').css('display', '');
 	div.find('.inline-tip').html( msg );
 };
@@ -25,7 +28,8 @@ function show_remoting( jobj, msg ) {
 function register_validation( the_form, inputs )
 {
 	var input_prompt = function( obj ) {
-		$(obj).parent("div").attr('class', 'field-group field-group-highlight field-group-type');
+		$(obj).parent("div").removeClass('field-group-error field-group-ok').addClass('field-group-highlight field-group-type');
+		// $(obj).parent("div").attr('class', 'field-group field-group-highlight field-group-type');
 		var prompt = $(obj).data('prompt');
 		if ( typeof( prompt ) == 'undefined' || prompt == '' )
 		{
