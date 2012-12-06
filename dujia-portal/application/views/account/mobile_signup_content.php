@@ -117,7 +117,7 @@ $( function() {
 	inputs.filter('#signup_password').data( 'remoting', '检查中...' );
 	inputs.filter('#signup_password').data( 'validation', function() {
 		var obj = inputs.filter('#signup_password');
-		if ( /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,22}$/.test( obj.val() ) )
+		if ( /^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]{6,32}$/.test( obj.val() ) )
 		{
 			return 'success';
 		}

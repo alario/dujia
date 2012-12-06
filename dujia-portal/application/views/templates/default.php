@@ -92,8 +92,9 @@ if ( isset( $jslink ) )
 							<li class="name">欢迎您，<?php echo $ticket['mb']; ?>
 							</li>
 							<li class="login"><a href="/account/logout">退出</a>
-							</li><?php else: ?>
-							
+							</li>
+							<?php else: ?>
+
 							<li class="login"><a href="/account/login">登录</a>
 							</li>
 							<li class="login"><a href="/account/signup">注册</a>
@@ -124,14 +125,14 @@ if ( isset( $jslink ) )
 					
 		</script>
 		<?php endif; ?>
-		<div id="bdw" style="bdw">
+		<div id="bdw" style="">
 			<div id="bd" class="cf" style="position: static;">
 				<?php echo $content; ?>
 				<?php if ( isset( $sidebar ) ) echo $sidebar; ?>
 			</div>
 		</div>
 		<div id="ftw">
-			<?php if ( isset( $trace) )  var_dump( $trace ); ?>
+			<?php if ( isset( $trace ) )  var_dump( $trace ); ?>
 			<div id="ft">
 				<div class="ftbox">
 					<h3>用户帮助</h3>

@@ -100,7 +100,7 @@ class Account extends MY_Controller {
 			$this->load_templated_view( 'login', '/account/login_content', $data );
 		}
 		$this->db->delete('usr_captcha', array('uuid_key' => $captchaKey));
-		
+
 	}
 
 
@@ -110,11 +110,58 @@ class Account extends MY_Controller {
 		$this->load_templated_view( 'signup', '/account/signup_content' );
 	}
 
-	public function signup_checkemail( $email )
+
+	public function signup_check( $type )
 	{
-		$sql = 'select uid from usr_account where email = ?';
-		$query = $this->db->query( $sql, $email );
+		if ( $type == 'email' )
+			$sql = 'select uid from usr_account where email = ?';
+		if ( $type == 'name' )
+			$sql = 'select uid from usr_account where user_name = ?';
+		
+		$query = $this->db->query( $sql, $this->input->post('value') );
 		echo $query->num_rows();
+	}
+	
+	public function signup_submit()
+	{
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		
+		$this->form_validation->set_rules('email', '邮箱', 'required');
+		$this->form_validation->set_rules('username', '用户名', 'required');
+		$this->form_validation->set_rules('password', '密码', 'required');
+		
+		if ($this->form_validation->run() === FALSE)
+		{
+			echo "validation error";
+			return;
+		}
+		$captchaKey = $this->input->cookie('captcha-key');
+			
+		$sql = 'select * from usr_captcha where uuid_key = ?';
+		$query = $this->db->query( $sql, $captchaKey );
+		if ( $query->num_rows() == 0 )
+		{
+			$data['account'] = $account;
+			$this->set_template_param( 'subtitle', '注册' );
+			$this->set_template_param( 'sysmsg', '验证码已失效，请重新注册' );
+			$this->load_templated_view( 'login', '/account/signup_content', $data );
+			return;
+		}
+		
+		$row = $query->row();
+		if ( strcasecmp( $row->answer, $this->input->post('captcha') ) == 0 )
+		{
+			
+		}
+		else
+		{
+			$data['account'] = $account;
+			$this->set_template_param( 'subtitle', '注册' );
+			$this->set_template_param( 'sysmsg', '验证码错误' );
+			$this->load_templated_view( 'login', '/account/signup_content', $data );
+		}
+		$this->db->delete('usr_captcha', array('uuid_key' => $captchaKey));
 	}
 
 	public function mobile_signup()

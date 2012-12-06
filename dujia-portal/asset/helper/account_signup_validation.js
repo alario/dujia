@@ -25,7 +25,7 @@ function show_remoting( jobj, msg ) {
 function register_validation( the_form, inputs )
 {
 	var input_prompt = function( obj ) {
-		$(obj).parent("div").attr('class', 'field-group field-group-type');
+		$(obj).parent("div").attr('class', 'field-group field-group-highlight field-group-type');
 		var prompt = $(obj).data('prompt');
 		if ( typeof( prompt ) == 'undefined' || prompt == '' )
 		{
@@ -71,7 +71,7 @@ function register_validation( the_form, inputs )
 		{
 			show_error( $(obj), result );
 		}
-		if ( method == 'input' && typeof $(obj).data("trigger-validation") != 'undefined' )
+		if ( method == 'onblur' && typeof $(obj).data("trigger-validation") != 'undefined' )
 		{
 			input_validate( $(obj).data("trigger-validation"), 'ontrigger' );
 		}
