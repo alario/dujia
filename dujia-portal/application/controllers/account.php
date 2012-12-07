@@ -33,7 +33,14 @@ class Account extends MY_Controller {
 		$account = $this->input->post('account');
 		$pwd = $this->input->post('password');
 		$captchaKey = $this->input->cookie('captcha-key');
-			
+		if ( ! $captchaKey )
+		{
+			$data['account'] = $account;
+			$this->set_template_param( 'subtitle', '登录' );
+			$this->set_template_param( 'sysmsg', '验证码已失效，请重新登录' );
+			$this->load_templated_view( 'login', '/account/login_content', $data );
+			return;
+		}
 		$sql = 'select * from usr_captcha where uuid_key = ?';
 		$query = $this->db->query( $sql, $captchaKey );
 		if ( $query->num_rows() == 0 )
@@ -79,9 +86,22 @@ class Account extends MY_Controller {
 				$row = $query->row();
 				if ( $row->password == $pwd )
 				{
-					echo 'success';
-					$remember = ( $this->input->post('remember') == '1' );
-					$this->write_account_ticket( $row->uid, $row->user_name, $row->email, $row->mobile, $remember );
+					if ( $row->email_verification == 2 )
+					{
+						$this->set_template_param( 'subtitle', '邮箱未验证' );
+						$data0['name'] = $row->user_name;
+						$data0['mail'] = $row->email;
+						$data0['uid'] = $row->uid;
+						$this->set_template_param( 'css', '/asset/account.css' );
+						$this->load_templated_view( 'signuped', '/account/unverified_content', $data0 );
+					}
+					else
+					{
+						$remember = ( $this->input->post('remember') == '1' );
+						$this->write_account_ticket( $row->uid, $row->user_name, $row->email, $row->mobile, $remember );
+							
+						echo 'success';
+					}
 				}
 				else
 				{
@@ -117,20 +137,20 @@ class Account extends MY_Controller {
 			$sql = 'select uid from usr_account where email = ?';
 		if ( $type == 'name' )
 			$sql = 'select uid from usr_account where user_name = ?';
-		
+
 		$query = $this->db->query( $sql, $this->input->post('value') );
 		echo $query->num_rows();
 	}
-	
+
 	public function signup_submit()
 	{
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		
+
 		$this->form_validation->set_rules('email', '邮箱', 'required');
 		$this->form_validation->set_rules('username', '用户名', 'required');
 		$this->form_validation->set_rules('password', '密码', 'required');
-		
+
 		if ($this->form_validation->run() === FALSE)
 		{
 			echo "validation error";
@@ -156,7 +176,7 @@ class Account extends MY_Controller {
 			$this->load_templated_view( 'signup', '/account/signup_content', $data );
 			return;
 		}
-		
+
 		$row = $query->row();
 		if ( strcasecmp( $row->answer, $this->input->post('captcha') ) == 0 )
 		{
@@ -168,55 +188,117 @@ class Account extends MY_Controller {
 			);
 			$inserted = $this->db->insert( 'usr_account', $insertion );
 			$uid = $this->db->insert_id();
-			/*
-			$user_name = $this->input->post('user_name');
-			$email = $this->input->post('email');
-			$this->write_account_ticket($uid, $user_name, $email, '', FALSE);
-			*/
+
 
 			$data['email'] = $this->input->post('email');
 			$this->load->helper('string');
-			$code = random_string( 'sha1', 64 );
+			$code = random_string( 'sha1', 128 );
 			$insertion = array(
 					'uid' => $uid,
 					'email' => $data['email'],
 					'code' => $code
-					);
+			);
+			$this->db->delete( 'usr_mailcode', array( 'uid' => $uid ) );
 			$inserted = $this->db->insert( 'usr_mailcode', $insertion );
 
 			$this->load->helper('url');
 			$verifyUrl = base_url("/account/signup_verify/".$uid."?c=".urlencode($code));
-			
+
 			$this->load->library('parser');
-			
+
 			$maildata = array(
 					'url' => $verifyUrl
 			);
 			$mailMessage = $this->parser->parse('/account/mail_verification', $maildata, TRUE);
-			
+
 			$this->load->library('email');
-			
+
 			$this->email->from('alario@126.com', '度假网');
 			$this->email->to( $data['email'] );
-			
+
 			$this->email->subject('感谢注册度假网，请验证Email');
 			$this->email->message($mailMessage);
-			
+
 			$this->email->send();
-			
+
 			$this->set_template_param( 'subtitle', '验证邮箱' );
 			$this->set_template_param( 'css', '/asset/account.css' );
+			/*
+			 $data0['name'] = $this->input->post('username');
+			$data0['mail'] = $this->input->post('email');
+			$data0['uid'] = $uid;
+			*/
+			$data['uid'] = $uid;
+			$domain = substr( $data['email'], strrpos($data['email'], '@') + 1 );
+			$sql = 'select webmail from usr_webmail where domain = ?';
+			$query = $this->db->query( $sql, $domain );
+			if ( $query->num_rows() > 0 )
+			{
+				$data['go'] = $query->row()->webmail;
+			}
 			$this->load_templated_view( 'signuped', '/account/signup_next_content', $data );
 		}
 		else
 		{
 			$this->set_template_param( 'subtitle', '注册' );
 			$this->set_template_param( 'sysmsg', '验证码错误' );
-			$this->load_templated_view( 'login', '/account/signup_content', $data );
+			$this->load_templated_view( 'signup', '/account/signup_content', $data );
 		}
 		$this->db->delete('usr_captcha', array('uuid_key' => $captchaKey));
 	}
-	
+
+	public function mailcode_once_more( $uid )
+	{
+
+		$sql = 'select * from usr_mailcode where uid = ?';
+		$query = $this->db->query( $sql, $uid );
+		if ( $query->num_rows() == 0 )
+		{
+			$code = random_string( 'sha1', 128 );
+			$sql = 'select email from usr_account where uid = ?';
+			$query = $this->db->query( $sql, $uid );
+			if ( $query->num_rows() == 0 )
+			{
+				echo 'No User';
+				return;
+			}
+			$email = $query->row()->email;
+			$insertion = array(
+					'uid' => $uid,
+					'email' => $email,
+					'code' => $code
+			);
+			$inserted = $this->db->insert( 'usr_mailcode', $insertion );
+		}
+		else
+		{
+			$row = $query->row();
+			$email = $row->email;
+			$code = $row->code;
+		}
+		$this->load->helper('url');
+		$verifyUrl = base_url("/account/signup_verify/".$uid."?c=".urlencode($code));
+
+		$this->load->library('parser');
+
+		$maildata = array(
+				'url' => $verifyUrl
+		);
+		$mailMessage = $this->parser->parse('/account/mail_verification', $maildata, TRUE);
+
+		$this->load->library('email');
+
+		$this->email->from('alario@126.com', '度假网');
+		$this->email->to( $email );
+
+		$this->email->subject('感谢注册度假网，请验证Email');
+		$this->email->message($mailMessage);
+
+		$this->email->send();
+		echo 'OK';
+
+	}
+
 	public function signup_verify( $uid )
 	{
 		$c = $this->input->get( "c", TRUE );
@@ -227,7 +309,21 @@ class Account extends MY_Controller {
 			echo "NO";
 			return;
 		}
-		
+		$row = $query->row();
+		if ( $row->code == $c )
+		{
+			$this->db->where( 'uid', $uid );
+			$this->db->update( 'usr_account', array( 'email_verification' => 0 ) );
+
+			$this->set_template_param( 'css', '/asset/account.css' );
+			$this->set_template_param( 'subtitle', '验证邮件' );
+			$this->load_templated_view( 'verify', '/account/verified_content' );
+		}
+		else
+		{
+			echo "wrong";
+		}
+		$this->db->delete('usr_mailcode', array('id' => $row->id));
 	}
 
 	public function mobile_signup()
@@ -252,7 +348,8 @@ class Account extends MY_Controller {
 			echo 'mobile already exists';
 			return;
 		}
-		$code = rand( 100000, 999999 );
+		$this->load->helper('string');
+		$code = random_string( 'numeric', 6 );
 
 		$insertion = array(
 				'mobile' => $num,

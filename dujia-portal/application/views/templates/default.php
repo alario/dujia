@@ -139,7 +139,7 @@ if ( isset( $js ) )
 					
 		</script>
 		<?php endif; ?>
-		<div id="bdw" style="">
+		<div id="bdw" class="bdw">
 			<div id="bd" class="cf">
 				<?php echo $content; ?>
 				<?php if ( isset( $sidebar ) ) echo $sidebar; ?>
