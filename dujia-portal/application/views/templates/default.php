@@ -90,16 +90,16 @@ if ( isset( $js ) )
 				<div id="site-nav" class="site-nav">
 					<div class="nav-wrapper cf">
 						<ul class="nav">
-							<li><a href="/home.php">我的家</a></li>
+							<li><a href="/home">我的家</a></li>
 							<li><a href="/regular" class="hover">精选假期<span class="tip-new"></span>
 							</a></li>
-							<li><a href="/tehui.php">特惠酒店</a>
+							<li><a href="/tehui">特惠酒店</a>
 							</li>
-							<li><a href="/tehui.php">特惠公寓</a>
+							<li><a href="/tehui">特惠公寓</a>
 							</li>
-							<li><a href="/guolei.php">国内度假</a>
+							<li><a href="/guolei">国内度假</a>
 							</li>
-							<li><a href="/haiwai.php">海外度假</a></li>
+							<li><a href="/haiwai">海外度假</a></li>
 						</ul>
 						<ul class="user-info">
 							<?php if ( isset( $ticket ) ):?>
@@ -151,47 +151,43 @@ if ( isset( $js ) )
 				<div class="ftbox">
 					<h3>用户帮助</h3>
 					<ul>
-						<li><a href="http://www.meituan.com/help/faq">常见问题</a></li>
-						<li><a href="http://bj.meituan.com/deals">往期北京团购</a></li>
-						<li><a href="http://www.meituan.com/help/email">邮箱白名单设置</a></li>
-						<li><a href="http://www.meituan.com/help/api">开放API</a></li>
-						<li><a href="http://www.meituan.com/about/anticheat">反诈骗公告</a></li>
+						<li><a href="#">常见问题</a></li>
+						<li><a href="#">往期精选假期</a></li>
+						<li><a href="#">邮箱白名单设置</a></li>
+						<li><a href="#">开放API</a></li>
+						<li><a href="#">反诈骗公告</a></li>
 					</ul>
 				</div>
 				<div class="ftbox">
 					<h3>获取更新</h3>
 					<ul>
-						<li><a href="http://www.meituan.com/maillist/subscribe">邮件订阅</a></li>
-						<li><a href="http://www.meituan.com/mobile/">iPhone/Android</a></li>
-						<li><a rel="nofollow" href="http://user.qzone.qq.com/97231705"
-							target="_blank">美团QQ空间</a></li>
-						<li><a rel="nofollow" href="http://t.sina.com.cn/meituanbj"
-							target="_blank">美团新浪微博</a></li>
-						<li><a rel="nofollow" href="http://t.qq.com/meituan"
-							target="_blank">美团腾讯微博</a></li>
-						<li><a href="http://www.meituan.com/feed/beijing" target="_blank">RSS订阅</a>
+						<li><a href="#">邮件订阅</a></li>
+						<li><a href="#">iPhone/Android</a></li>
+						<li><a rel="nofollow" href="#" target="_blank">度假网QQ空间</a></li>
+						<li><a rel="nofollow" href="#" target="_blank">度假网新浪微博</a></li>
+						<li><a rel="nofollow" href="#" target="_blank">度假网腾讯微博</a></li>
+						<li><a href="#" target="_blank">RSS订阅</a>
 						</li>
 					</ul>
 				</div>
 				<div class="ftbox">
 					<h3>商务合作</h3>
 					<ul>
-						<li><a href="http://www.meituan.com/feedback/seller"
-							gaevent="InnerLink|Click|footer/seller">提供团购信息</a></li>
-						<li><a href="http://www.meituan.com/seller/deposit">保证金缴纳说明</a></li>
-						<li><a href="http://www.meituan.com/about#contact">市场合作</a></li>
-						<li><a href="http://union.meituan.com/" target="_blank">美团联盟</a></li>
+						<li><a href="#" gaevent="InnerLink|Click|footer/seller">提供交换资源</a>
+						</li>
+						<li><a href="#">保证金缴纳说明</a></li>
+						<li><a href="#">市场合作</a></li>
+						<li><a href="#" target="_blank">度假联盟</a></li>
 					</ul>
 				</div>
 				<div class="ftbox">
 					<h3>公司信息</h3>
 					<ul>
-						<li><a href="http://www.meituan.com/about/">关于美团</a></li>
-						<li><a href="http://www.meituan.com/commitment/">美团承诺</a></li>
-						<li><a href="http://www.meituan.com/about/press">媒体报道</a></li>
-						<li><a href="http://www.meituan.com/about/job"
-							gaevent="InnerLink|Click|footer/job">加入我们</a></li>
-						<li><a href="http://www.meituan.com/about/law">法律声明</a></li>
+						<li><a href="#">关于度假网</a></li>
+						<li><a href="#">度假网承诺</a></li>
+						<li><a href="#">媒体报道</a></li>
+						<li><a href="#" gaevent="InnerLink|Click|footer/job">加入我们</a></li>
+						<li><a href="#">法律声明</a></li>
 					</ul>
 				</div>
 				<div class="ftbox service">
@@ -204,23 +200,20 @@ if ( isset( $js ) )
 				<div class="copyright">
 					<p>
 						©<span title="I:6; Q:1; S:1; C:2; F:0; T:26.92; H:e21">2012</span><a
-							href="http://www.meituan.com/">美团网团购</a> meituan.com <a
-							href="http://www.miibeian.gov.cn/" target="_blank">京ICP证070791号</a>
-						京公网安备110105002099号
+							href="http://dujia.cn/">度假网</a> dujia.cn <a
+							href="http://www.miibeian.gov.cn/" target="_blank">京ICP证XXXXX号</a>
+						京公网安备XXXXXXXXXXX号
 					</p>
 				</div>
 
 				<ul class="cert cf">
-					<li class="record"><a title="备案信息"
-						href="http://www.hd315.gov.cn/beian/view.asp?bianhao=010202011122700003"
-						hidefocus="true" target="_blank">备案信息</a></li>
+					<li class="record"><a title="备案信息" href="#" hidefocus="true"
+						target="_blank">备案信息</a></li>
 					<li class="alipay"><a title="支付宝特约商家">支付宝特约商家</a></li>
-					<li class="tenpay"><a
-						href="http://union.tenpay.com/cgi-bin/trust_mch/ShowTrustMchInfo.cgi?uin=1209236701&amp;uin_type=1"
-						title="财付通诚信商家" hidefocus="true" target="_blank">财付通诚信商家</a></li>
-					<li class="knet"><a
-						href="https://ss.cnnic.cn/verifyseal.dll?sn=2011042100100007986&amp;ct=df&amp;pa=899466i"
-						target="_blank" title="可信网站认证">可信网站</a></li>
+					<li class="tenpay"><a href="#" title="财付通诚信商家" hidefocus="true"
+						target="_blank">财付通诚信商家</a></li>
+					<li class="knet"><a href="#" target="_blank" title="可信网站认证">可信网站</a>
+					</li>
 				</ul>
 			</div>
 		</div>
